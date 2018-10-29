@@ -93,7 +93,7 @@ public class HomeController {
             return "redirect:/register?userExists=true";
         }else{
 
-            UserCommand savedUser = userService.registerStudent(userCommand);
+            userService.registerStudent(userCommand);
 
 
                 return "redirect:/register?registered=true";

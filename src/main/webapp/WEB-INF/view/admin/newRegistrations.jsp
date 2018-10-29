@@ -127,7 +127,7 @@
 
                                                                 </td>
                                                                 <td>${newStudent.studentCommand.firstName}</td>
-                                                                <td>${newStudent.studentCommand.firstlastName}</td>
+                                                                <td>${newStudent.studentCommand.lastName}</td>
                                                                 <td>${newStudent.email}</td>
 
                                                                 <td>

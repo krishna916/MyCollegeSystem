@@ -10,6 +10,6 @@ public interface UserService extends UserDetailsService {
 
     boolean checkIfUserExists(String email);
 
-    UserCommand registerStudent(UserCommand userCommand);
+    void registerStudent(UserCommand userCommand);
 
 }

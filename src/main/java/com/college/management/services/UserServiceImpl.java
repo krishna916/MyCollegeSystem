@@ -1,12 +1,15 @@
 package com.college.management.services;
 
+import com.college.management.command.StudentCommand;
 import com.college.management.command.UserCommand;
 import com.college.management.converter.StudentCommandToStudent;
 import com.college.management.converter.UserCommandToUser;
 import com.college.management.converter.UserToUserCommand;
 import com.college.management.model.Role;
+import com.college.management.model.Student;
 import com.college.management.model.User;
 import com.college.management.repositories.RoleRepository;
+import com.college.management.repositories.StudentRepository;
 import com.college.management.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -25,6 +28,9 @@ public class UserServiceImpl implements UserService {
 
     @Autowired
     private RoleRepository roleRepository;
+
+    @Autowired
+    private StudentRepository studentRepository;
 
     @Autowired
     private PasswordEncoder passwordEncoder;
@@ -89,7 +95,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserCommand registerStudent(UserCommand userCommand) {
+    public void registerStudent(UserCommand userCommand) {
 
 
         User user = userCommandToUser.convert(userCommand);
@@ -99,7 +105,7 @@ public class UserServiceImpl implements UserService {
         //user.getStudent().setFirstName(userCommand.getStudentCommand().getFirstName());
         //user.getStudent().setLastName(userCommand.getStudentCommand().getLastName());
 
-        user.setStudent(studentCommandToStudent.convert(userCommand.getStudentCommand()));
+       // user.setStudent(studentCommandToStudent.convert(userCommand.getStudentCommand()));
 
         Role role = roleRepository.findByName(user.getRole());
 
@@ -109,8 +115,23 @@ public class UserServiceImpl implements UserService {
 
         User savedUser = userRepository.save(user);
 
+        StudentCommand studentCommand = userCommand.getStudentCommand();
+        Student student = studentCommandToStudent.convert(studentCommand);
 
-        return userToUserCommand.convert(savedUser);
+        Optional<User> justSavedUser = userRepository.findByEmail(savedUser.getEmail());
+
+        if(justSavedUser.isPresent()){
+
+            student.setUser(justSavedUser.get());
+        }
+
+        studentRepository.save(student);
+
+
+        System.out.println(student);
+
+
+       // return userToUserCommand.convert(savedUser);
 
     }
 }
