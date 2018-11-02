@@ -1,29 +1,18 @@
 package com.college.management.services;
 
-import com.college.management.command.StudentCommand;
-import com.college.management.command.UserCommand;
-import com.college.management.converter.StudentCommandToStudent;
-import com.college.management.converter.StudentToStudentCommand;
-import com.college.management.converter.UserCommandToUser;
-import com.college.management.converter.UserToUserCommand;
-import com.college.management.model.AdminInformation;
-import com.college.management.model.Role;
-import com.college.management.model.Student;
-import com.college.management.model.User;
-import com.college.management.repositories.AdminRepository;
-import com.college.management.repositories.RoleRepository;
-import com.college.management.repositories.StudentRepository;
-import com.college.management.repositories.UserRepository;
-import com.fasterxml.jackson.databind.BeanProperty;
+import com.college.management.command.*;
+import com.college.management.converter.*;
+import com.college.management.model.*;
+import com.college.management.repositories.*;
+
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 @PreAuthorize("hasRole('ROLE_ADMIN')")
@@ -43,6 +32,15 @@ public class AdminServiceImpl implements AdminService {
     @Autowired
     private StudentRepository studentRepository;
 
+    @Autowired
+    private ProfessorRepository professorRepository;
+
+
+    @Autowired
+    private DepartmentRepository departmentRepository;
+
+    @Autowired
+    private CourseRepository courseRepository;
 
 
     @Autowired
@@ -59,6 +57,22 @@ public class AdminServiceImpl implements AdminService {
 
     @Autowired
     private StudentToStudentCommand studentToStudentCommand;
+
+    @Autowired
+    private DepartmentToDepartmentCommand departmentToDepartmentCommand;
+
+    @Autowired
+    private CourseCommandToCourse courseCommandToCourse;
+
+    @Autowired
+    private CourseToCourseCommand courseToCourseCommand;
+
+    @Autowired
+    private ProfessorCommandToProfessor professorCommandToProfessor;
+
+    @Autowired
+    private ProfessorToProfessorCommand professorToProfessorCommand;
+
 
     @Override
     @Transactional
@@ -103,6 +117,12 @@ public class AdminServiceImpl implements AdminService {
         //adding role to student
         Role role = roleRepository.findByName(student.getUser().getRole());
         student.getUser().getRoles().add(role);
+
+        Optional<Department> department = departmentRepository.findById(studentCommand.getDepartmentCommand().getId());
+
+        if(department.isPresent()){
+            student.setDepartment(department.get());
+        }
 
         System.out.println(student);
 
@@ -227,6 +247,7 @@ public class AdminServiceImpl implements AdminService {
 
                // System.out.println(newUser.getStudent().getFirstName() + newUser.getStudent().getLastName());
                 tempUserCommand.setStudentCommand(studentToStudentCommand.convert(newUser.getStudent()));
+                tempUserCommand.getStudentCommand().setDepartmentCommand(departmentToDepartmentCommand.convert(newUser.getStudent().getDepartment()));
 
                  userCommand.add(tempUserCommand);
                  System.out.print(tempUserCommand);
@@ -250,5 +271,202 @@ public class AdminServiceImpl implements AdminService {
 //        }
 //        System.out.println("\n\n");
         return students;
+    }
+
+
+    // ######################  Related to Courses and Departments ##############//
+
+    @Override
+    @Transactional
+    public Map<Long, String> findAllDepartments() {
+
+        List<Department> tempDepartments = departmentRepository.selectDepartmentIdAndDepartmentName();
+
+        List<Department> check = new ArrayList<>();
+
+        Map<Long, String> tempDepartment = new LinkedHashMap<>();
+        Iterator itr = tempDepartments.iterator();
+        while (itr.hasNext()){
+            Object[] objects = (Object[]) itr.next();
+            //now have one array object for each row
+
+//            Department department = new Department();
+//            department.setId(Long.parseLong(String.valueOf(objects[0])));
+//            department.setDepartmentName(String.valueOf(objects[1]));
+//            check.add(department);
+
+
+            tempDepartment.put(Long.parseLong(String.valueOf(objects[0])), String.valueOf(objects[1]));
+        }
+        return tempDepartment;
+    }
+
+    @Override
+    @Transactional
+    public boolean checkIfCourseExists(String courseCode) {
+
+        Optional<Course> checkIfExists = courseRepository.findByCourseCode(courseCode);
+
+        if(checkIfExists.isPresent()){
+            return true;
+        }else{
+            return false;
+        }
+
+
+    }
+
+    @Override
+    @Transactional
+    public void saveCourse(CourseCommand courseCommand) {
+
+
+
+
+    Course course = courseCommandToCourse.convert(courseCommand);
+
+    Optional<Department> department = departmentRepository.findById(courseCommand.getDepartmentCommand().getId());
+
+    if(department.isPresent()){
+        course.setDepartment(department.get());
+    }
+
+
+
+    courseRepository.save(course);
+
+
+
+
+    }
+
+    @Override
+    public List<CourseCommand> showAllCourses() {
+
+       List<Course> courses = courseRepository.findAllByOrderByDepartmentAsc();
+
+       List<CourseCommand> courseCommands = new ArrayList<>();
+
+       for(Course course: courses){
+
+           CourseCommand courseCommand = courseToCourseCommand.convert(course);
+           courseCommand.setDepartmentCommand(
+                   departmentToDepartmentCommand.convert(course.getDepartment())
+           );
+
+           courseCommands.add(courseCommand);
+       }
+
+       return courseCommands;
+    }
+
+    @Override
+    public void deleteCourse(Long courseId) {
+
+        courseRepository.deleteById(courseId);
+
+
+    }
+
+
+
+
+
+
+
+
+    // ##########################  PROFESSOR RELATED   ###################  //
+
+
+    @Override
+    public boolean checkIfProfessorExists(String email) {
+
+
+        Optional<User> checkIfUserExists = userRepository.findByEmail(email);
+
+        if(checkIfUserExists.isPresent()){
+            return true;
+        }else{
+            return false;
+        }
+
+
+    }
+
+    @Override
+    public void saveProfessor(ProfessorCommand professorCommand) {
+
+
+        Professor professor = professorCommandToProfessor.convert(professorCommand);
+
+        professor.setUser(userCommandToUser.convert(professorCommand.getUserCommand()));
+
+        //encode password and enable account
+        professor.getUser().setPassword(passwordEncoder.encode(professor.getUser().getPassword()));
+
+        professor.getUser().setEnabled(true);
+
+
+        //add role to professor
+        Role role = roleRepository.findByName(professor.getUser().getRole());
+
+        professor.getUser().getRoles().add(role);
+
+        //add department to professor
+        Optional<Department> department = departmentRepository.findById(professorCommand.getDepartmentCommand().getId());
+
+        if(department.isPresent()){
+
+            professor.setDepartment(department.get());
+        }
+
+
+        professorRepository.save(professor);
+
+
+
+    }
+
+    @Override
+    public List<UserCommand> showAllProfessors() {
+
+        List<User> users = userRepository.findAllProfessor();
+
+        List<UserCommand> userCommands = new ArrayList<>();
+
+        for(User user: users){
+
+            UserCommand userCommand = userToUserCommand.convert(user);
+            userCommand.setProfessorCommand(professorToProfessorCommand.convert(user.getProfessor()));
+            userCommand.getProfessorCommand().setDepartmentCommand(departmentToDepartmentCommand.convert(user.getProfessor().getDepartment()));
+
+            userCommands.add(userCommand);
+
+        }
+
+        return userCommands;
+    }
+
+    @Override
+    public ProfessorCommand findProfessorById(Long id) {
+
+        Optional<Professor> optionalProfessor = professorRepository.findById(id);
+
+        Professor professor = new Professor();
+        if(optionalProfessor.isPresent()){
+
+            professor = optionalProfessor.get();
+            ProfessorCommand professorCommand = professorToProfessorCommand.convert(professor);
+
+            professorCommand.setUserCommand(userToUserCommand.convert(professor.getUser()));
+            professorCommand.setDepartmentCommand(departmentToDepartmentCommand.convert(professor.getDepartment()));
+
+            return professorCommand;
+        }
+
+
+
+
+        return null;
     }
 }

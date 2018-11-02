@@ -1,14 +1,10 @@
 package com.college.management.controller;
 
-import com.college.management.command.StudentCommand;
-import com.college.management.command.UserCommand;
-import com.college.management.model.AdminInformation;
-import com.college.management.model.Student;
-import com.college.management.model.User;
-import com.college.management.model.UserPhoto;
+import com.college.management.command.*;
+import com.college.management.model.*;
 import com.college.management.services.AdminService;
 import com.college.management.services.PhotoService;
-import com.college.management.services.StudentService;
+
 import com.college.management.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.propertyeditors.StringTrimmerEditor;
@@ -17,7 +13,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.ui.ModelMap;
+
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
@@ -25,7 +21,9 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.Valid;
 import java.io.IOException;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 @Controller
 @PreAuthorize("hasRole('ROLE_ADMIN')")
@@ -49,6 +47,31 @@ public class AdminController {
 
         StringTrimmerEditor stringTrimmerEditor = new StringTrimmerEditor(true);
         dataBinder.registerCustomEditor(String.class, stringTrimmerEditor);
+    }
+
+
+    public Model bootstrapAdmin(String principalName, Model model) throws IOException{
+        //Find Current Admin Details
+        UserCommand user = userService.findByEmail(principalName);
+
+        //find Admin Information
+        AdminInformation admin = adminService.selectFirstNameByEmail(principalName);
+
+        //find admin photo
+        String userPhoto = photoService.findImageByUserId(user.getId());
+
+        if(userPhoto != null) {
+            //add base64 image to model
+            model.addAttribute("userPhoto", userPhoto);
+        }
+
+        Long count = adminService.counNewlyRegisteredStudents();
+        user.setCountNewStudents(count);
+
+        model.addAttribute("user", user);
+        model.addAttribute("admin", admin);
+
+        return model;
     }
 
 
@@ -139,6 +162,10 @@ public class AdminController {
 
 
         model.addAttribute("studentCommand", new StudentCommand());
+
+        Map<Long, String> departments = userService.findAllDepartments();
+        model.addAttribute("department", departments);
+
 
         return "admin/addStudent";
     }
@@ -390,11 +417,228 @@ public class AdminController {
     }
 
     @RequestMapping("/deleteNewStudent/{userId}")
-        public String deleteNewStudent(@PathVariable("userId") Long userId){
+    public String deleteNewStudent(@PathVariable("userId") Long userId){
 
-            adminService.deleteNewStudent(userId);
+        adminService.deleteNewStudent(userId);
 
-            return "redirect:/admin/newRegistrations";
+        return "redirect:/admin/newRegistrations";
+    }
+
+    @GetMapping("/addCourse")
+    public String showAddCourseForm(Model model){
+
+        //Obtain Current Admin Details from Security Context Holder
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String principalName = authentication.getName();
+
+        //Find Current Admin Details
+        UserCommand user = userService.findByEmail(principalName);
+
+        //find Admin Information
+        AdminInformation admin = adminService.selectFirstNameByEmail(principalName);
+
+        //find admin photo
+        String userPhoto = null;
+        try {
+            userPhoto = photoService.findImageByUserId(user.getId());
+        }catch (IOException e){
+
         }
+
+
+        if(userPhoto != null) {
+            //add base64 image to model
+            model.addAttribute("userPhoto", userPhoto);
+        }
+
+        Long count = adminService.counNewlyRegisteredStudents();
+        user.setCountNewStudents(count);
+
+        model.addAttribute("user", user);
+        model.addAttribute("admin", admin);
+
+
+
+        Map<Long, String> departments = adminService.findAllDepartments();
+        model.addAttribute("department", departments);
+        model.addAttribute("courseCommand", new CourseCommand());
+
+
+        return "admin/addCourse";
+    }
+
+
+    @PostMapping("/addCourse")
+    public String addCourse(@Valid @ModelAttribute("courseCommand") CourseCommand courseCommand,
+                            BindingResult bindingResult, Model model){
+
+        if(bindingResult.hasErrors()){
+            System.out.println(bindingResult);
+            return "redirect:/admin/addCourse?error=true";
+        }
+
+        if(adminService.checkIfCourseExists(courseCommand.getCourseCode())){
+
+            return "redirect:/admin/addCourse?courseExists=true";
+        }
+
+        adminService.saveCourse(courseCommand);
+
+
+        return "redirect:/admin/showAllCourses";
+    }
+
+    @GetMapping("/showAllCourses")
+    public String showAllcourses(Model model){
+
+        //Obtain Current Admin Details from Security Context Holder
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String principalName = authentication.getName();
+
+        try {
+            model = bootstrapAdmin(principalName, model);
+        }catch (IOException e){
+            e.printStackTrace();
+        }
+
+        List<CourseCommand> courses = adminService.showAllCourses();
+
+        model.addAttribute("courseCommands", courses);
+
+        return "admin/allCourses";
+    }
+
+    @GetMapping("deleteCourse/{courseId}")
+    public String deleteCourse(@PathVariable("courseId") Long id){
+
+        adminService.deleteCourse(id);
+
+        return "redirect:/admin/showAllCourses";
+    }
+
+
+   /* ####################   Professors Related #########################*/
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    @GetMapping("/addProfessor")
+    public String ShowAddProfessorForm(Model model){
+
+        //Obtain Current Admin Details from Security Context Holder
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String principalName = authentication.getName();
+
+        try {
+            model = bootstrapAdmin(principalName, model);
+        }catch (IOException e){
+            e.printStackTrace();
+        }
+
+        Map<Long, String> departments = adminService.findAllDepartments();
+        model.addAttribute("department", departments);
+
+        model.addAttribute("professorCommand", new ProfessorCommand());
+
+
+        return "admin/addProfessor";
+    }
+
+
+    @PostMapping("/addProfessor")
+    public String addProfessor(@Valid @ModelAttribute ProfessorCommand professorCommand,
+                               BindingResult bindingResult){
+
+        if(bindingResult.hasErrors()){
+            System.out.println(bindingResult);
+            return "redirect:/admin/addProfessor?error=true";
+        }
+
+        boolean checkIfAlreadyExists = adminService.checkIfProfessorExists(professorCommand.getUserCommand().getEmail());
+
+        if(checkIfAlreadyExists){
+            return "redirect:/admin/addProfessor?alreadyExists=true";
+        }
+
+        adminService.saveProfessor(professorCommand);
+
+
+        return "redirect:/admin/allProfessors";
+    }
+
+
+    @GetMapping("/allProfessors")
+    public String showAllProfessors(Model model){
+
+        //Obtain Current Admin Details from Security Context Holder
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String principalName = authentication.getName();
+
+        try {
+            model = bootstrapAdmin(principalName, model);
+        }catch (IOException e){
+            e.printStackTrace();
+        }
+
+
+        List<UserCommand> userCommands = adminService.showAllProfessors();
+
+        model.addAttribute("userCommands", userCommands );
+
+
+
+        return "admin/allProfessors";
+    }
+
+
+    @GetMapping("/editProfessor/{professorId}")
+    public String showEditProfessorForm(@PathVariable("professorId") Long professorId, Model model){
+
+        //Obtain Current Admin Details from Security Context Holder
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String principalName = authentication.getName();
+
+        try {
+            model = bootstrapAdmin(principalName, model);
+        }catch (IOException e){
+            e.printStackTrace();
+        }
+
+        ProfessorCommand professorCommand = adminService.findProfessorById(professorId);
+
+        model.addAttribute("professorCommand", professorCommand);
+
+        return "admin/editProfessor";
+    }
+
+    @PostMapping("/editProfessor")
+    public String updateProfessor(@Valid @ModelAttribute("professorCommand") ProfessorCommand professorCommand,
+                                  BindingResult bindingResult){
+
+        if(bindingResult.hasErrors()){
+            System.out.println(bindingResult);
+            return "redirect:/admin/editProfessor/" + professorCommand.getId();
+        }
+
+
+
+
+        return null;
+    }
+
+
+
+
 
 }

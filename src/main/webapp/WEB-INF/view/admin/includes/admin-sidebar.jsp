@@ -58,16 +58,16 @@
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a href="#" class="nav-link nav-toggle"> <i class="fas fa-chalkboard-teacher"></i></i>
+                    <a href="#" class="nav-link nav-toggle"> <i class="fas fa-chalkboard-teacher"></i>
                         <span class="title">Professors</span> <span class="pull-right"><i class="fas fa-angle-right"></i></span>
                     </a>
                     <ul class="sub-menu">
                         <li class="nav-item">
-                            <a href="all_professors.html" class="nav-link "> <span class="title">All Professors</span>
+                            <a href="${pageContext.request.contextPath}/admin/allProfessors" class="nav-link "> <span class="title">All Professors</span>
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a href="add_professor.html" class="nav-link "> <span class="title">Add Professor</span>
+                            <a href="${pageContext.request.contextPath}/admin/addProfessor" class="nav-link "> <span class="title">Add Professor</span>
                             </a>
                         </li>
                         <li class="nav-item">
@@ -117,17 +117,17 @@
                     </ul>
                 </li>
                 <li class="nav-item">
-                    <a href="#" class="nav-link nav-toggle"> <i class="material-icons">school</i>
-                        <span class="title">Courses</span> <span class="arrow"></span>
-                        <span class="label label-rouded label-menu label-success">new</span>
+                    <a href="#" class="nav-link nav-toggle"> <i class="fas fa-graduation-cap"></i>
+                        <span class="title">Courses</span> <span class="pull-right"><i class="fas fa-angle-right"></i></span>
+
                     </a>
                     <ul class="sub-menu">
                         <li class="nav-item">
-                            <a href="all_courses.html" class="nav-link "> <span class="title">All Courses</span>
+                            <a href="${pageContext.request.contextPath}/admin/showAllCourses" class="nav-link "> <span class="title">All Courses</span>
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a href="add_course.html" class="nav-link "> <span class="title">Add Course</span>
+                            <a href="${pageContext.request.contextPath}/admin/addCourse" class="nav-link "> <span class="title">Add Course</span>
                             </a>
                         </li>
                         <li class="nav-item">

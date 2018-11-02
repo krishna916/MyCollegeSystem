@@ -5,9 +5,11 @@ import com.college.management.command.UserCommand;
 import com.college.management.converter.StudentCommandToStudent;
 import com.college.management.converter.UserCommandToUser;
 import com.college.management.converter.UserToUserCommand;
+import com.college.management.model.Department;
 import com.college.management.model.Role;
 import com.college.management.model.Student;
 import com.college.management.model.User;
+import com.college.management.repositories.DepartmentRepository;
 import com.college.management.repositories.RoleRepository;
 import com.college.management.repositories.StudentRepository;
 import com.college.management.repositories.UserRepository;
@@ -18,7 +20,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -31,6 +33,10 @@ public class UserServiceImpl implements UserService {
 
     @Autowired
     private StudentRepository studentRepository;
+
+    @Autowired
+    private DepartmentRepository departmentRepository;
+
 
     @Autowired
     private PasswordEncoder passwordEncoder;
@@ -111,6 +117,9 @@ public class UserServiceImpl implements UserService {
 
         user.getRoles().add(role);
 
+
+
+
         System.out.println(user);
 
         User savedUser = userRepository.save(user);
@@ -118,8 +127,13 @@ public class UserServiceImpl implements UserService {
         StudentCommand studentCommand = userCommand.getStudentCommand();
         Student student = studentCommandToStudent.convert(studentCommand);
 
-        Optional<User> justSavedUser = userRepository.findByEmail(savedUser.getEmail());
+        Optional<Department> department = departmentRepository.findById(userCommand.getStudentCommand().getDepartmentCommand().getId());
+        if(department.isPresent()){
+            student.setDepartment(department.get());
+        }
 
+
+        Optional<User> justSavedUser = userRepository.findByEmail(savedUser.getEmail());
         if(justSavedUser.isPresent()){
 
             student.setUser(justSavedUser.get());
@@ -133,5 +147,28 @@ public class UserServiceImpl implements UserService {
 
        // return userToUserCommand.convert(savedUser);
 
+    }
+
+    @Override
+    public Map<Long, String> findAllDepartments() {
+        List<Department> tempDepartments = departmentRepository.selectDepartmentIdAndDepartmentName();
+
+        List<Department> check = new ArrayList<>();
+
+        Map<Long, String> tempDepartment = new LinkedHashMap<>();
+        Iterator itr = tempDepartments.iterator();
+        while (itr.hasNext()){
+            Object[] objects = (Object[]) itr.next();
+            //now have one array object for each row
+
+//            Department department = new Department();
+//            department.setId(Long.parseLong(String.valueOf(objects[0])));
+//            department.setDepartmentName(String.valueOf(objects[1]));
+//            check.add(department);
+
+
+            tempDepartment.put(Long.parseLong(String.valueOf(objects[0])), String.valueOf(objects[1]));
+        }
+        return tempDepartment;
     }
 }

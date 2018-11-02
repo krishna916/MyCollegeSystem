@@ -15,9 +15,9 @@ public class Course implements Serializable {
     private Long id;
 
     @Column(name="course_name", nullable = false, length = 50)
-    private String name;
+    private String courseName;
 
-    @Column(name="course_code", nullable = false, length = 4)
+    @Column(name="course_code", nullable = false, length = 4, unique = true)
     private String courseCode;
 
     @Column(name = "course_details")
@@ -25,6 +25,9 @@ public class Course implements Serializable {
 
     @ManyToMany(mappedBy = "courses", fetch = FetchType.LAZY, cascade = {CascadeType.MERGE, CascadeType.PERSIST})
     private Set<Student> students = new HashSet<>();
+
+    @ManyToMany(mappedBy = "courses", fetch = FetchType.LAZY, cascade = {CascadeType.MERGE, CascadeType.PERSIST})
+    private Set<Professor> professors = new HashSet<>();
 
     @ManyToOne( cascade = {CascadeType.MERGE, CascadeType.PERSIST})
     @JoinColumn(name="department_id")
@@ -43,12 +46,50 @@ public class Course implements Serializable {
         this.id = id;
     }
 
-    public String getName() {
-        return name;
+    public String getCourseName() {
+        return courseName;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setCourseName(String courseName) {
+        this.courseName = courseName;
+    }
+
+    public String getCourseCode() {
+        return courseCode;
+    }
+
+    public void setCourseCode(String courseCode) {
+
+        if(courseCode != null){
+            this.courseCode = courseCode.toUpperCase();
+        }else {
+
+            this.courseCode = null;
+        }
+    }
+
+    public String getCourseDetails() {
+        return courseDetails;
+    }
+
+    public void setCourseDetails(String courseDetails) {
+        this.courseDetails = courseDetails;
+    }
+
+    public Set<Student> getStudents() {
+        return students;
+    }
+
+    public void setStudents(Set<Student> students) {
+        this.students = students;
+    }
+
+    public Set<Professor> getProfessors() {
+        return professors;
+    }
+
+    public void setProfessors(Set<Professor> professors) {
+        this.professors = professors;
     }
 
     public Department getDepartment() {
@@ -65,20 +106,26 @@ public class Course implements Serializable {
         if (!(o instanceof Course)) return false;
         Course course = (Course) o;
         return Objects.equals(getId(), course.getId()) &&
-                Objects.equals(getName(), course.getName()) &&
+                Objects.equals(getCourseName(), course.getCourseName()) &&
+                Objects.equals(getCourseCode(), course.getCourseCode()) &&
+                Objects.equals(getCourseDetails(), course.getCourseDetails()) &&
+                Objects.equals(getStudents(), course.getStudents()) &&
+                Objects.equals(getProfessors(), course.getProfessors()) &&
                 Objects.equals(getDepartment(), course.getDepartment());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getId(), getName(), getDepartment());
+        return Objects.hash(getId(), getCourseName(), getCourseCode(), getCourseDetails(), getStudents(), getProfessors(), getDepartment());
     }
 
     @Override
     public String toString() {
         return "Course{" +
                 "id=" + id +
-                ", name='" + name + '\'' +
+                ", courseName='" + courseName + '\'' +
+                ", courseCode='" + courseCode + '\'' +
+                ", courseDetails='" + courseDetails + '\'' +
                 ", department=" + department +
                 '}';
     }

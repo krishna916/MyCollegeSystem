@@ -40,6 +40,8 @@ public class UserCommand {
 
     private StudentCommand studentCommand;
 
+    private ProfessorCommand professorCommand;
+
     private UserPhotoCommand userPhotoCommand;
 
     public UserCommand(){}
@@ -126,6 +128,14 @@ public class UserCommand {
         return userPhotoCommand;
     }
 
+    public ProfessorCommand getProfessorCommand() {
+        return professorCommand;
+    }
+
+    public void setProfessorCommand(ProfessorCommand professorCommand) {
+        this.professorCommand = professorCommand;
+    }
+
     public Long getCountNewStudents() {
         return countNewStudents;
     }
@@ -145,6 +155,7 @@ public class UserCommand {
                 ", role='" + role + '\'' +
                 ", adminInformationCommand=" + adminInformationCommand +
                 ", studentCommand=" + studentCommand +
+                ", professorCommand=" + professorCommand +
                 '}';
     }
 }

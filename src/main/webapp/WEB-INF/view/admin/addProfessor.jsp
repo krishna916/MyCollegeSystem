@@ -11,7 +11,7 @@
     <meta name="viewport"
           content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>AddStudent</title>
+    <title>Add Professor</title>
 
     <jsp:include page="includes/admin-header-css.jsp" />
 
@@ -37,6 +37,7 @@
         <!-- #########--->
 
 
+
         <!-- start page content -->
         <div class="page-content-wrapper">
             <div class="page-content">
@@ -44,17 +45,17 @@
                     <div class="page-title-breadcrumb">
                         <div class="row">
                             <div class="col-md-4">
-                            <div class=" pull-left">
-                                <div class="page-title">Add Student</div>
-                            </div>
+                                <div class=" pull-left">
+                                    <div class="page-title">Add Professor</div>
+                                </div>
                             </div>
                             <div class="col-md-8">
                                 <ol class="breadcrumb page-breadcrumb pull-right">
                                     <li><i class="fa fa-home"></i>&nbsp;<a class="parent-item" href="/admin/home">Home</a>&nbsp;<i class="fa fa-angle-right"></i>
                                     </li>
-                                    <li><a class="parent-item" href="#">Student</a>&nbsp;<i class="fa fa-angle-right"></i>
+                                    <li><a class="parent-item" href="#">Professor</a>&nbsp;<i class="fa fa-angle-right"></i>
                                     </li>
-                                    <li class="active">Add Student</li>
+                                    <li class="active">Add Profesor</li>
                                 </ol>
                             </div>
                         </div>
@@ -69,8 +70,8 @@
 
                             </div>
                             <div class="card-body" id="bar-parent">
-                                <c:url var="addStudent" value="${pageContext.request.contextPath}/admin/addStudent" />
-                                <form:form modelAttribute="studentCommand" action="${addStudent}"
+                                <c:url var="addProfesor" value="${pageContext.request.contextPath}/admin/addProfessor" />
+                                <form:form modelAttribute="professorCommand" action="${addProfesor}"
                                            id="form_sample_1" method="POST" class="form-horizontal">
                                 <div class="form-body">
                                     <div class="row">
@@ -79,8 +80,8 @@
                                                 <p class="alert alert-danger">Enter Valid Details</p>
                                             </c:if>
 
-                                            <c:if test="${param.studentexists == true}" >
-                                                <p class="alert alert-danger">Student Already Exits</p>
+                                            <c:if test="${param.alreadyExists == true}" >
+                                                <p class="alert alert-danger">Professor Already Exits</p>
                                             </c:if>
                                         </div>
                                     </div>
@@ -90,7 +91,7 @@
                                         </label>
                                         <div class="col-md-5">
 
-                                            <form:hidden path="userCommand.role" value="ROLE_STUDENT" />
+                                            <form:hidden path="userCommand.role" value="ROLE_PROFESSOR" />
 
                                             <form:input path="firstName" type="text" name="firstname"
                                                         placeholder="enter first name" required="required"
@@ -122,7 +123,7 @@
                                         </label>
                                         <div class="col-md-5">
                                             <form:password path="userCommand.password"  name="password"
-                                                        required="required" placeholder="enter Default Password" class="form-control input-height" /> </div>
+                                                           required="required" placeholder="enter Default Password" class="form-control input-height" /> </div>
                                         <form:errors path="userCommand.password"  cssClass="alert alert-danger" />
                                     </div>
 
@@ -158,8 +159,8 @@
                                         </label>
                                         <div class="col-md-5">
 
-                                            <form:input path="dob" min="1990-01-01" max="1998-12-31" value="yyyy/mm/dd" id="myDate"
-                                              required="required" class="form-control input-height" size="16" placeholder="date of Birth" type="date" />
+                                            <form:input path="dob" min="1958-01-01" max="1993-12-31" value="yyyy/mm/dd" id="myDate"
+                                                        required="required" class="form-control input-height" size="16" placeholder="date of Birth" type="date" />
 
                                             <form:errors path="dob"  cssClass="alert alert-danger" />
                                         </div>
@@ -229,20 +230,25 @@
                                 </div>
                             </div>
                             </form:form>
-                            </div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-        <!-- end page content -->
-
-
-
-
     </div>
+    <!-- end page content -->
+
+
+
+
+
+
+
+</div>
 </div>
 
+
     <jsp:include page="includes/admin-footer-js.jsp" />
+
 </body>
 </html>

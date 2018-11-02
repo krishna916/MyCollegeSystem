@@ -1,14 +1,18 @@
 package com.college.management.services;
 
 
-import com.college.management.command.StudentCommand;
-import com.college.management.command.UserCommand;
+import com.college.management.command.*;
 import com.college.management.model.AdminInformation;
+import com.college.management.model.Department;
 import com.college.management.model.User;
 
 import java.util.List;
+import java.util.Map;
 
 public interface AdminService {
+
+
+    // For Students //
 
     AdminInformation selectFirstNameByEmail(String email);
 
@@ -34,11 +38,33 @@ public interface AdminService {
 
     List<UserCommand> selectNewlyRegisteredStudents();
 
-
-
-
-
     List<User> findAllStudent();
+
+    // ###################### Related to Course and Department################### //
+
+    Map<Long, String> findAllDepartments();
+
+    boolean checkIfCourseExists(String courseCode);
+
+    void saveCourse(CourseCommand courseCommand);
+
+    List<CourseCommand> showAllCourses();
+
+    void deleteCourse(Long courseId);
+
+
+
+    // ##########################  PROFESSOR RELATED   ###################  //
+
+    boolean checkIfProfessorExists(String email);
+
+    void saveProfessor(ProfessorCommand professorCommand);
+
+    List<UserCommand> showAllProfessors();
+
+    ProfessorCommand findProfessorById(Long id);
+
+    void updateProfessor(ProfessorCommand professorCommand);
 
 
 }

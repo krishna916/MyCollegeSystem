@@ -3,6 +3,8 @@ package com.college.management.model;
 import javax.persistence.*;
 import java.io.Serializable;
 import java.time.LocalDate;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 @Table(name="professor")
@@ -46,6 +48,14 @@ public class Professor implements Serializable {
     @OneToOne(fetch = FetchType.EAGER, cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE})
     @JoinColumn(name="user_id")
     private User user;
+
+    @ManyToMany(fetch = FetchType.LAZY, cascade = {CascadeType.MERGE, CascadeType.PERSIST})
+    @JoinTable(
+            name="PROFESSOR_COURSE",
+            joinColumns = @JoinColumn(name="professor_id"),
+            inverseJoinColumns = @JoinColumn(name="course_id")
+    )
+    private Set<Course> courses = new HashSet<>();
 
     @ManyToOne(fetch = FetchType.LAZY, cascade = {CascadeType.MERGE, CascadeType.PERSIST})
     @JoinColumn(name = "department_id")
@@ -139,5 +149,41 @@ public class Professor implements Serializable {
 
     public void setUser(User user) {
         this.user = user;
+    }
+
+    public Set<Course> getCourses() {
+        return courses;
+    }
+
+    public void setCourses(Set<Course> courses) {
+        this.courses = courses;
+    }
+
+    public Department getDepartment() {
+        return department;
+    }
+
+    public void setDepartment(Department department) {
+        this.department = department;
+    }
+
+
+    @Override
+    public String toString() {
+        return "Professor{" +
+                "id=" + id +
+                ", firstName='" + firstName + '\'' +
+                ", lastName='" + lastName + '\'' +
+                ", address='" + address + '\'' +
+                ", gender='" + gender + '\'' +
+                ", phone='" + phone + '\'' +
+                ", bloodGroup='" + bloodGroup + '\'' +
+                ", state='" + state + '\'' +
+                ", city='" + city + '\'' +
+                ", dateOfBirth=" + dateOfBirth +
+                ", user=" + user +
+                ", courses=" + courses +
+                ", department=" + department +
+                '}';
     }
 }

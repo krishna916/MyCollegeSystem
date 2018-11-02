@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import javax.validation.Valid;
+import java.util.Map;
 import java.util.Set;
 
 @Controller
@@ -73,6 +74,11 @@ public class HomeController {
     public String showRegisterForm(Model model){
 
         model.addAttribute("userCommand", new UserCommand());
+
+        Map<Long, String> departments = userService.findAllDepartments();
+        model.addAttribute("department", departments);
+
+
         return "/register";
 
     }

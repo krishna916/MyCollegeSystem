@@ -1,17 +1,20 @@
 package com.college.management.services;
 
 import com.college.management.command.StudentCommand;
+import com.college.management.converter.DepartmentToDepartmentCommand;
 import com.college.management.converter.StudentCommandToStudent;
 import com.college.management.converter.StudentToStudentCommand;
+import com.college.management.model.Department;
 import com.college.management.model.Student;
 import com.college.management.model.User;
+import com.college.management.repositories.DepartmentRepository;
 import com.college.management.repositories.StudentRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 @PreAuthorize("hasRole('ROLE_STUDENT')")
@@ -21,10 +24,16 @@ public class StudentServiceImpl implements StudentService {
     private StudentRepository studentRepository;
 
     @Autowired
+    private DepartmentRepository departmentRepository;
+
+    @Autowired
     private StudentCommandToStudent studentCommandToStudent;
 
     @Autowired
     private StudentToStudentCommand studentToStudentCommand;
+
+    @Autowired
+    private DepartmentToDepartmentCommand departmentToDepartmentCommand;
 
     @Override
     public StudentCommand findById(Long id) {
@@ -45,10 +54,14 @@ public class StudentServiceImpl implements StudentService {
 
         Student student = studentRepository.selectStudentFromUserEmail(email);
 
+        System.out.println(student);
+
+        StudentCommand studentCommand = studentToStudentCommand.convert(student);
+        studentCommand.setDepartmentCommand(departmentToDepartmentCommand.convert(student.getDepartment()));
 
 
 
-        return studentToStudentCommand.convert(student);
+        return studentCommand;
     }
 
     @Override
@@ -66,7 +79,9 @@ public class StudentServiceImpl implements StudentService {
                 studentCommand.getPhone(),
                 studentCommand.getState(),
                 studentCommand.getCity(),
-                studentCommand.getBloodGroup(), id);
+                studentCommand.getBloodGroup(),
+
+                id);
 
     }
 
@@ -82,4 +97,33 @@ public class StudentServiceImpl implements StudentService {
 
 
     }
+
+
+
+    @Override
+    @Transactional
+    public Map<Long, String> findAllDepartments() {
+
+        List<Department> tempDepartments = departmentRepository.selectDepartmentIdAndDepartmentName();
+
+        List<Department> check = new ArrayList<>();
+
+        Map<Long, String> tempDepartment = new LinkedHashMap<>();
+        Iterator itr = tempDepartments.iterator();
+        while (itr.hasNext()){
+            Object[] objects = (Object[]) itr.next();
+            //now have one array object for each row
+
+//            Department department = new Department();
+//            department.setId(Long.parseLong(String.valueOf(objects[0])));
+//            department.setDepartmentName(String.valueOf(objects[1]));
+//            check.add(department);
+
+
+            tempDepartment.put(Long.parseLong(String.valueOf(objects[0])), String.valueOf(objects[1]));
+        }
+        return tempDepartment;
+    }
+
+
 }

@@ -1,17 +1,20 @@
 package com.college.management.command;
 
-
-
+import com.college.management.model.Course;
+import com.college.management.model.Department;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.HashSet;
+import java.util.Set;
 
-public class StudentCommand {
+public class ProfessorCommand {
 
     private Long id;
+
 
     @NotNull(message = "is required")
     @NotBlank
@@ -55,10 +58,14 @@ public class StudentCommand {
 
     private UserCommand userCommand;
 
+    private String course;
+
+    private Set<CourseCommand> coursesCommand = new HashSet<>();
+
     private DepartmentCommand departmentCommand;
 
 
-    public StudentCommand(){}
+    public ProfessorCommand(){}
 
 
 
@@ -181,9 +188,25 @@ public class StudentCommand {
         return userCommand;
     }
 
-
     public void setUserCommand(UserCommand userCommand) {
         this.userCommand = userCommand;
+    }
+
+
+    public String getCourse() {
+        return course;
+    }
+
+    public void setCourse(String course) {
+        this.course = course;
+    }
+
+    public Set<CourseCommand> getCoursesCommand() {
+        return coursesCommand;
+    }
+
+    public void setCoursesCommand(Set<CourseCommand> coursesCommand) {
+        this.coursesCommand = coursesCommand;
     }
 
     public DepartmentCommand getDepartmentCommand() {
@@ -207,7 +230,9 @@ public class StudentCommand {
                 ", state='" + state + '\'' +
                 ", city='" + city + '\'' +
                 ", dateOfBirth=" + dateOfBirth +
+                ", userCommand=" + userCommand +
                 ", departmentCommand=" + departmentCommand +
                 '}';
     }
+
 }

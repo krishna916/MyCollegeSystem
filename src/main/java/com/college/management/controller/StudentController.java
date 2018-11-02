@@ -24,6 +24,7 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import java.io.IOException;
+import java.util.Map;
 
 @Controller
 @PreAuthorize("hasRole('ROLE_STUDENT')")
@@ -155,6 +156,7 @@ public class StudentController {
         }else{
             model.addAttribute("studentCommand", studentCommand);
         }
+
 
 
 

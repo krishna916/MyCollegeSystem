@@ -20,7 +20,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
     @Query("select u from User u where u.id = ?1")
     User selectById(Long id);
 
-    @Query("select u from User u join u.roles r where r.name = 'ROLE_STUDENT' and u.enabled= true ")
+    @Query("select u from User u join u.roles r where r.name = 'ROLE_STUDENT' and u.enabled= true order by u.student.department.departmentName")
     List<User> findAllStudent();
 
     @Query("select u from User u join u.roles r where r.name= 'ROLE_STUDENT' and u.enabled= false ")
@@ -32,6 +32,8 @@ public interface UserRepository extends JpaRepository<User, Long> {
     @Query("update User u set u.enabled = true where u.id=?1")
     void approveStudent(Long id);
 
+    @Query("select u from User u join u.roles r where r.name = 'ROLE_PROFESSOR' order by u.professor.department.departmentName")
+    List<User> findAllProfessor();
 
 
 }

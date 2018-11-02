@@ -50,6 +50,9 @@ public class User implements  Serializable, UserDetails {
     @OneToOne(mappedBy = "user", cascade = {CascadeType.MERGE,CascadeType.PERSIST, CascadeType.REMOVE}, fetch = FetchType.LAZY)
     private Student student;
 
+    @OneToOne(mappedBy = "user", cascade = {CascadeType.MERGE,CascadeType.PERSIST, CascadeType.REMOVE}, fetch = FetchType.LAZY)
+    private Professor professor;
+
     @OneToOne(mappedBy = "user", cascade = {CascadeType.MERGE, CascadeType.REMOVE}, fetch = FetchType.LAZY)
     private UserPhoto userPhoto;
 
@@ -165,6 +168,14 @@ public class User implements  Serializable, UserDetails {
 
     public void setStudent(Student student) {
         this.student = student;
+    }
+
+    public Professor getProfessor() {
+        return professor;
+    }
+
+    public void setProfessor(Professor professor) {
+        this.professor = professor;
     }
 
     public UserPhoto getUserPhoto() {

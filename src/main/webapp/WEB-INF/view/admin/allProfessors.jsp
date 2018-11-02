@@ -3,6 +3,7 @@
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 
+
 <!doctype html>
 <html lang="en">
 <head>
@@ -10,7 +11,7 @@
     <meta name="viewport"
           content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>New Registrations</title>
+    <title>All Professors</title>
 
     <jsp:include page="includes/admin-header-css.jsp" />
 
@@ -35,6 +36,8 @@
 
         <!-- #########--->
 
+
+        <!-- start page content -->
         <div class="page-content-wrapper">
             <div class="page-content">
                 <div class="page-bar">
@@ -42,16 +45,16 @@
                         <div class="row">
                             <div class="col-md-4">
                                 <div class=" pull-left">
-                                    <div class="page-title">New Registrations</div>
+                                    <div class="page-title">All Professors List</div>
                                 </div>
                             </div>
                             <div class="col-md-8">
                                 <ol class="breadcrumb page-breadcrumb pull-right">
                                     <li><i class="fa fa-home"></i>&nbsp;<a class="parent-item" href="/admin/home">Home</a>&nbsp;<i class="fa fa-angle-right"></i>
                                     </li>
-                                    <li><a class="parent-item" href="#">Students</a>&nbsp;<i class="fa fa-angle-right"></i>
+                                    <li><a class="parent-item" href="#">Professors</a>&nbsp;<i class="fa fa-angle-right"></i>
                                     </li>
-                                    <li class="active">New Registrations</li>
+                                    <li class="active">All Professors List</li>
                                 </ol>
                             </div>
                         </div>
@@ -67,7 +70,7 @@
                                         <div class="col-md-12">
                                             <div class="card card-box">
                                                 <div class="card-head">
-                                                    <header>New Regitrations</header>
+                                                    <header>All Students List</header>
                                                     <div class="tools">
                                                         <a class="fa fa-repeat btn-color box-refresh" href="javascript:;"></a>
                                                         <a class="t-collapse btn-color fa fa-chevron-down" href="javascript:;"></a>
@@ -110,33 +113,36 @@
                                                             <thead>
                                                             <tr>
                                                                 <th></th>
-                                                                <th>First Name</th>
-                                                                <th>Last Name</th>
+                                                                <th> First Name </th>
+                                                                <th> Last Name </th>
                                                                 <th> Email </th>
                                                                 <th> Department </th>
+                                                                <th> City </th>
+                                                                <th>Appointed Date</th>
                                                                 <th> Action </th>
-
                                                             </tr>
                                                             </thead>
                                                             <tbody>
 
 
-                                                            <c:forEach items="${newStudents}" var="newStudent">
+                                                            <c:forEach items="${userCommands}" var="userCommand">
 
                                                             <tr class="odd gradeX">
                                                                 <td class="patient-img">
-
+                                                                    <img alt="" class="img-circle " src="data:image/jpeg;base64,${userCommand.userPhotoCommand.image}" />
                                                                 </td>
-                                                                <td>${newStudent.studentCommand.firstName}</td>
-                                                                <td>${newStudent.studentCommand.lastName}</td>
-                                                                <td>${newStudent.email}</td>
-                                                                <td>${newStudent.studentCommand.departmentCommand.departmentName}</td>
+                                                                <td>${userCommand.professorCommand.firstName}</td>
+                                                                <td>${userCommand.professorCommand.lastName}</td>
+                                                                <td>${userCommand.email}</td>
+                                                                <td>${userCommand.professorCommand.departmentCommand.departmentName}</td>
+                                                                <td>${userCommand.professorCommand.city}</td>
+                                                                <td>${userCommand.professorCommand.dob}</td>
 
                                                                 <td>
-                                                                    <a href="${pageContext.request.contextPath}/admin/approveStudent/${newStudent.id}" class="btn btn-primary btn-xs">
-                                                                        <i class="fas fa-thumbs-up"></i>
+                                                                    <a href="/admin/editProfessor/${userCommand.professorCommand.id}" class="btn btn-primary btn-xs">
+                                                                        <i class="fas fa-edit"></i>
                                                                     </a>
-                                                                    <a href="${pageContext.request.contextPath}/admin/deleteNewStudent/${newStudent.id}" class="btn btn-danger btn-xs">
+                                                                    <a href="/admin/deleteStudent/${userCommand.id}" class="btn btn-danger btn-xs">
                                                                         <i class="fas fa-trash-alt"></i>
                                                                     </a>
                                                                 </td>
@@ -159,14 +165,10 @@
             </div>
         </div>
 
-
-
-
-
     </div>
 </div>
 
-    <jsp:include page="includes/admin-footer-js.jsp" />
 
+<jsp:include page="includes/admin-footer-js.jsp" />
 </body>
 </html>

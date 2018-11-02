@@ -14,19 +14,19 @@ public class Department implements Serializable {
     private Long id;
 
     @Column(name="department_name", nullable = false, length = 50)
-    private String name;
+    private String departmentName;
 
-    @Column(name="department_code", nullable = false, length = 4)
+    @Column(name="department_code", nullable = false, length = 4, unique = true)
     private String departmentCode;
 
     @Transient
-    private String student;
+    private Student student;
 
     @Transient
-    private String course;
+    private Course course;
 
     @Transient
-    private String professor;
+    private Professor professor;
 
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "department", cascade = {CascadeType.MERGE, CascadeType.PERSIST})
@@ -35,12 +35,17 @@ public class Department implements Serializable {
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "department", cascade = {CascadeType.MERGE, CascadeType.PERSIST})
     private List<Course> courses = new ArrayList<>();
 
-    @OneToMany(mappedBy = "department", cascade = {CascadeType.MERGE, CascadeType.PERSIST})
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "department", cascade = {CascadeType.MERGE, CascadeType.PERSIST})
     private List<Professor> professors = new ArrayList<>();
 
 
 
     public Department(){}
+
+    public Department(Long id,String departmentName) {
+        this.id = id;
+        this.departmentName = departmentName;
+    }
 
     public Long getId() {
         return id;
@@ -50,12 +55,13 @@ public class Department implements Serializable {
         this.id = id;
     }
 
-    public String getName() {
-        return name;
+
+    public String getDepartmentName() {
+        return departmentName;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setDepartmentName(String departmentName) {
+        this.departmentName = departmentName;
     }
 
     public List<Student> getStudents() {
@@ -74,20 +80,41 @@ public class Department implements Serializable {
         this.courses = courses;
     }
 
-    public String getStudent() {
+    public String getDepartmentCode() {
+        return departmentCode;
+    }
+
+    public void setDepartmentCode(String departmentCode) {
+
+        if(departmentCode != null){
+            this.departmentCode = departmentCode.toUpperCase();
+        }
+
+        this.departmentCode = null;
+    }
+
+    public Student getStudent() {
         return student;
     }
 
-    public void setStudent(String student) {
+    public void setStudent(Student student) {
         this.student = student;
     }
 
-    public String getCourse() {
+    public Course getCourse() {
         return course;
     }
 
-    public void setCourse(String course) {
+    public void setCourse(Course course) {
         this.course = course;
+    }
+
+    public Professor getProfessor() {
+        return professor;
+    }
+
+    public void setProfessor(Professor professor) {
+        this.professor = professor;
     }
 
     public List<Professor> getProfessors() {
@@ -98,11 +125,14 @@ public class Department implements Serializable {
         this.professors = professors;
     }
 
-    public String getProfessor() {
-        return professor;
-    }
+    @Override
+    public String toString() {
+        return "Department{" +
+                "id=" + id +
+                ", departmentName='" + departmentName + '\'' +
+                ", departmentCode='" + departmentCode + '\'' +
 
-    public void setProfessor(String professor) {
-        this.professor = professor;
+
+                '}';
     }
 }

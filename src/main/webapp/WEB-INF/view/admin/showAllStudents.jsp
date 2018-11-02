@@ -116,7 +116,7 @@
                                                                 <th> First Name </th>
                                                                 <th> Last Name </th>
                                                                 <th> Email </th>
-                                                                <th> Mobile </th>
+                                                                <th> Department </th>
                                                                 <th> City </th>
                                                                 <th>Admission Date</th>
                                                                 <th> Action </th>
@@ -134,7 +134,7 @@
                                                                 <td>${user.student.firstName}</td>
                                                                 <td>${user.student.lastName}</td>
                                                                 <td>${user.email}</td>
-                                                                <td>${user.student.phone}</td>
+                                                                <td>${user.student.department.departmentName}</td>
                                                                 <td>${user.student.city}</td>
                                                                 <td>${user.student.registeredDate}</td>
 

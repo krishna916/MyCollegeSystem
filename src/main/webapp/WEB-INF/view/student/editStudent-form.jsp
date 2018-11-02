@@ -160,6 +160,18 @@
                                                 <form:errors path="city"  cssClass="alert alert-danger" />
                                         </div>
                                         <div class="form-group row">
+                                            <label class="control-label col-md-3">Department
+                                                <span class="required"> * </span>
+                                            </label>
+                                            <div class="col-md-5">
+
+                                                <form:input path="departmentCommand.departmentName" cssClass="form-control input-height" readonly="true" />
+                                            </div>
+                                        </div>
+
+
+
+                                        <div class="form-group row">
                                             <label class="control-label col-md-3">Blood Group
                                                 <span class="required">  </span>
                                             </label>

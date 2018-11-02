@@ -197,6 +197,7 @@ public class Student implements Serializable {
                 ", dateOfBirth=" + dateOfBirth +
                 ", registeredDate=" + registeredDate +
                 ", user=" + user +
+                ", department=" + department +
                 '}';
     }
 }

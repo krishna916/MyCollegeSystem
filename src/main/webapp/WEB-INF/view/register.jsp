@@ -85,6 +85,11 @@
                         <input class="form-control" id="confirmPassword"  type="password" name="confirmPassword" placeholder="Confirm Password" required>
                         <small id="error"></small>
 
+                        <form:select path="studentCommand.departmentCommand.id" cssClass="form-control" >
+                            <form:option value="" label="Select Department" />
+                            <form:options items="${department}" />
+
+                        </form:select>
 
 
                         <form:hidden path="role" value="ROLE_STUDENT" />

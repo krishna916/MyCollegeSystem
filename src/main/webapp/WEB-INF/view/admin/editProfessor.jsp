@@ -17,6 +17,11 @@
 
     <!-- dropzone -->
 
+    <script>
+        $("#myDate").datepicker();
+        $("#myDate").datepicker("setDate", ${studentCommand.dob});
+    </script>
+
 
 </head>
 <body class="page-header-fixed sidemenu-closed-hidelogo
@@ -44,9 +49,9 @@
                     <div class="page-title-breadcrumb">
                         <div class="row">
                             <div class="col-md-4">
-                            <div class=" pull-left">
-                                <div class="page-title">Add Student</div>
-                            </div>
+                                <div class=" pull-left">
+                                    <div class="page-title">Add Student</div>
+                                </div>
                             </div>
                             <div class="col-md-8">
                                 <ol class="breadcrumb page-breadcrumb pull-right">
@@ -69,18 +74,13 @@
 
                             </div>
                             <div class="card-body" id="bar-parent">
-                                <c:url var="addStudent" value="${pageContext.request.contextPath}/admin/addStudent" />
-                                <form:form modelAttribute="studentCommand" action="${addStudent}"
+                                <form:form modelAttribute="professorCommand" action="${pageContext.request.contextPath}/admin/editProfessor"
                                            id="form_sample_1" method="POST" class="form-horizontal">
                                 <div class="form-body">
                                     <div class="row">
                                         <div class="col-md-5 offset-md-3">
                                             <c:if test="${param.error == true}" >
                                                 <p class="alert alert-danger">Enter Valid Details</p>
-                                            </c:if>
-
-                                            <c:if test="${param.studentexists == true}" >
-                                                <p class="alert alert-danger">Student Already Exits</p>
                                             </c:if>
                                         </div>
                                     </div>
@@ -90,7 +90,7 @@
                                         </label>
                                         <div class="col-md-5">
 
-                                            <form:hidden path="userCommand.role" value="ROLE_STUDENT" />
+                                            <form:hidden path="id" value="${professorCommand.id}"/>
 
                                             <form:input path="firstName" type="text" name="firstname"
                                                         placeholder="enter first name" required="required"
@@ -111,39 +111,16 @@
                                             <span class="required"> * </span>
                                         </label>
                                         <div class="col-md-5">
-                                            <form:input path="userCommand.email" type="text" name="email"
-                                                        required="required" placeholder="enter Email" class="form-control input-height" /> </div>
+                                            <form:input path="userCommand.email" type="text" name="lastname" readonly="true"
+                                                        required="required" placeholder="enter last name" class="form-control input-height" /> </div>
                                         <form:errors path="userCommand.email"  cssClass="alert alert-danger" />
                                     </div>
 
-                                    <div class="form-group row">
-                                        <label class="control-label col-md-3">Password
-                                            <span class="required"> * </span>
-                                        </label>
-                                        <div class="col-md-5">
-                                            <form:password path="userCommand.password"  name="password"
-                                                        required="required" placeholder="enter Default Password" class="form-control input-height" /> </div>
-                                        <form:errors path="userCommand.password"  cssClass="alert alert-danger" />
-                                    </div>
 
 
-                                    <div class="form-group row">
-                                        <label class="control-label col-md-3">Gender
-                                            <span class="required"> * </span>
-                                        </label>
-                                        <div class="col-md-5">
-
-                                            <form:select path="gender" required="required" cssClass="form-control input-height">
-                                                <form:option value="" label="Select" />
-                                                <form:option value="Male" label="MALE" />
-                                                <form:option value="Female" label="FEMALE" />
-                                            </form:select>
-                                            <form:errors path="gender"  cssClass="alert alert-danger" />
-                                        </div>
-                                    </div>
                                     <div class="form-group row">
                                         <label class="control-label col-md-3">Mobile No.
-                                            <span class="required">  </span>
+                                            <span class="required"> * </span>
                                         </label>
                                         <div class="col-md-5">
                                             <form:input path="phone" name="phone" type="text" pattern="[789][0-9]{9}"
@@ -153,22 +130,35 @@
                                     </div>
 
                                     <div class="form-group row">
+                                        <label class="control-label col-md-3">Department
+                                            <span class="required"> * </span>
+                                        </label>
+                                        <div class="col-md-5">
+                                            <form:input path="departmentCommand.departmentName" name="departmentName" type="text"
+                                                        readonly="true" class="form-control input-height" />
+                                            <form:errors path="departmentCommand.departmentName"  required="required" cssClass="alert alert-danger" />
+                                        </div>
+                                    </div>
+
+
+
+                                    <div class="form-group row">
                                         <label class="control-label col-md-3">Date Of Birth
                                             <span class="required"> * </span>
                                         </label>
                                         <div class="col-md-5">
 
                                             <form:input path="dob" min="1990-01-01" max="1998-12-31" value="yyyy/mm/dd" id="myDate"
-                                              required="required" class="form-control input-height" size="16" placeholder="date of Birth" type="date" />
+                                                        class="form-control input-height" size="16" placeholder="date of Birth" type="date" />
 
                                             <form:errors path="dob"  cssClass="alert alert-danger" />
                                         </div>
-
+                                        <form:hidden path="userCommand.id" value="${professorCommand.userCommand.id}" />
                                     </div>
                                 </div>
                                 <div class="form-group row">
                                     <label class="control-label col-md-3">Address
-                                        <span class="required">  </span>
+                                        <span class="required"> * </span>
                                     </label>
                                     <div class="col-md-5">
                                         <form:textarea path="address" name="address" required="required"
@@ -201,24 +191,6 @@
                                     <form:errors path="bloodGroup"  cssClass="alert alert-danger" />
                                 </div>
 
-                                <div class="form-group row">
-                                    <label class="control-label col-md-3">Department
-                                        <span class="required"> * </span>
-                                    </label>
-                                    <div class="col-md-5">
-
-
-
-                                            <%--<form:select path="departmentCommand.id" items="${department}" />--%>
-
-                                        <form:select path="departmentCommand.id" cssClass="form-control input-height" >
-                                            <form:option value="" label="select" />
-                                            <form:options items="${department}" />
-
-                                        </form:select>
-                                    </div>
-                                </div>
-
                                 <div class="form-actions">
                                     <div class="row">
                                         <div class="offset-md-3 col-md-9">
@@ -229,20 +201,17 @@
                                 </div>
                             </div>
                             </form:form>
-                            </div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-        <!-- end page content -->
-
-
-
-
     </div>
+
+</div>
 </div>
 
-    <jsp:include page="includes/admin-footer-js.jsp" />
+
+<jsp:include page="includes/admin-footer-js.jsp" />
 </body>
 </html>
