@@ -66,5 +66,7 @@ public interface AdminService {
 
     void updateProfessor(ProfessorCommand professorCommand);
 
+    void deleteProfessor(Long userId);
+
 
 }

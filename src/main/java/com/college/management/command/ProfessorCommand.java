@@ -30,8 +30,7 @@ public class ProfessorCommand {
     @Size(min=5, max = 100)
     private String address;
 
-    @NotNull(message = "is required")
-    @NotBlank
+
     @Size(min = 4, max = 6)
     private String gender;
 

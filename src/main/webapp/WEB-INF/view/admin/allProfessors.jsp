@@ -81,7 +81,7 @@
                                                     <div class="row">
                                                         <div class="col-md-6 col-sm-6 col-6">
                                                             <div class="btn-group">
-                                                                <a href="/admin/addStudent" id="addRow" class="btn btn-info">
+                                                                <a href="/admin/addProfessor" id="addRow" class="btn btn-info">
                                                                     Add New <i class="fa fa-plus"></i>
                                                                 </a>
                                                             </div>
@@ -142,7 +142,7 @@
                                                                     <a href="/admin/editProfessor/${userCommand.professorCommand.id}" class="btn btn-primary btn-xs">
                                                                         <i class="fas fa-edit"></i>
                                                                     </a>
-                                                                    <a href="/admin/deleteStudent/${userCommand.id}" class="btn btn-danger btn-xs">
+                                                                    <a href="/admin/deleteProfessor/${userCommand.professorCommand.id}" class="btn btn-danger btn-xs">
                                                                         <i class="fas fa-trash-alt"></i>
                                                                     </a>
                                                                 </td>

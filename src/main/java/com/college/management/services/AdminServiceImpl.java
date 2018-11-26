@@ -469,4 +469,27 @@ public class AdminServiceImpl implements AdminService {
 
         return null;
     }
+
+    @Override
+    public void updateProfessor(ProfessorCommand professorCommand) {
+
+
+        professorRepository.updateProfessor(
+                professorCommand.getFirstName(),
+                professorCommand.getLastName(),
+                professorCommand.getAddress(),
+                professorCommand.getPhone(),
+                professorCommand.getState(),
+                professorCommand.getCity(),
+                professorCommand.getBloodGroup(),
+                professorCommand.getId()
+        );
+
+    }
+
+    @Override
+    public void deleteProfessor(Long userId) {
+
+        professorRepository.deleteById(userId);
+    }
 }

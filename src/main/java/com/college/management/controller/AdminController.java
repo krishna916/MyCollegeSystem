@@ -631,10 +631,18 @@ public class AdminController {
             return "redirect:/admin/editProfessor/" + professorCommand.getId();
         }
 
+        adminService.updateProfessor(professorCommand);
 
 
+        return "redirect:/admin/allProfessors";
+    }
 
-        return null;
+    @GetMapping("/deleteProfessor/{userId}")
+    public String deleteProfessor(@PathVariable("userId") Long id){
+
+        adminService.deleteProfessor(id);
+
+        return "redirect:/admin/allProfessors";
     }
 
 
