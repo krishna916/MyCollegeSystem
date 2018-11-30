@@ -628,7 +628,7 @@ public class AdminController {
 
         if(bindingResult.hasErrors()){
             System.out.println(bindingResult);
-            return "redirect:/admin/editProfessor/" + professorCommand.getId();
+            return "redirect:/admin/editProfessor/" + professorCommand.getId() +"?error=true";
         }
 
         adminService.updateProfessor(professorCommand);
@@ -645,6 +645,112 @@ public class AdminController {
         return "redirect:/admin/allProfessors";
     }
 
+
+
+    //  ###################### Batches Related ##################### //
+
+
+    @GetMapping("/addBatch")
+    public String showAddBatchForm(Model model){
+
+        //Obtain Current Admin Details from Security Context Holder
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String principalName = authentication.getName();
+
+        try {
+            model = bootstrapAdmin(principalName, model);
+        }catch (IOException e){
+            e.printStackTrace();
+        }
+
+        Map<Long, String> departments = adminService.findAllDepartments();
+        model.addAttribute("department", departments);
+
+        Map<Long, String> professors = adminService.findAllProfessors();
+
+        Map<Long, String> courses = adminService.findAllCourse();
+
+        model.addAttribute("professor", professors);
+
+        model.addAttribute("course", courses);
+
+        model.addAttribute("batchCommand", new BatchCommand());
+
+        return "admin/addBatch";
+    }
+
+
+    @PostMapping("/addBatch")
+    public String addBatch(@Valid @ModelAttribute("batchCommand") BatchCommand batchCommand,
+                           BindingResult bindingResult){
+
+        if(bindingResult.hasErrors()){
+
+            System.out.println(bindingResult);
+            return "redirect: /admin/addBatch?error=true";
+        }
+
+
+        adminService.saveBatch(batchCommand);
+
+        return null;
+    }
+
+
+    @GetMapping("/showBatch")
+    public String showAllBatches(Model model){
+
+        //Obtain Current Admin Details from Security Context Holder
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String principalName = authentication.getName();
+
+        try {
+            model = bootstrapAdmin(principalName, model);
+        }catch (IOException e){
+            e.printStackTrace();
+        }
+
+
+        List<BatchCommand> batchCommands = adminService.showAllBatches();
+
+        model.addAttribute("batchCommand", batchCommands);
+
+        return "admin/allBatches";
+    }
+
+
+    @GetMapping("/addStudentsToBatch/{batchId}")
+    public String addStudentsToBatch(@PathVariable("batchId") Long batchId, Model model){
+
+        //Obtain Current Admin Details from Security Context Holder
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String principalName = authentication.getName();
+
+        try {
+            model = bootstrapAdmin(principalName, model);
+        }catch (IOException e){
+            e.printStackTrace();
+        }
+
+
+        BatchCommand batchCommand  = adminService.findBatchById(batchId);
+
+        List<StudentCommand> studentCommands = adminService.findStudentsByDepartment(batchCommand.getDepartmentCommand().getDepartmentName(), batchId);
+
+
+        model.addAttribute("batchCommand", batchCommand);
+        model.addAttribute("studentCommand", studentCommands);
+
+        return "admin/addStudentsToBatch";
+    }
+
+
+    @GetMapping("/addStudentToBatch/{studentId}/{batchId}")
+    public String addStudentToBatch(@PathVariable("studentId") Long studentId,
+                                    @PathVariable("batchId") Long batchId){
+
+        return null;
+    }
 
 
 

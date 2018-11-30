@@ -7,6 +7,8 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 @Repository
 public interface StudentRepository extends JpaRepository<Student, Long> {
 
@@ -28,4 +30,9 @@ public interface StudentRepository extends JpaRepository<Student, Long> {
 
                            @Param("id")long id
                     );
+
+
+
+    @Query("select s from Student s join s.department d where d.departmentName=?1 ORDER BY s.firstName")
+    List<Student> showByDepartment(String departmentName);
 }

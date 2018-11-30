@@ -3,7 +3,9 @@ package com.college.management.model;
 import javax.persistence.*;
 import java.io.Serializable;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -43,6 +45,9 @@ public class Professor implements Serializable {
     @Column(name="date_of_birth")
     private LocalDate dateOfBirth;
 
+    @Transient
+    private String departmentName;
+
 
 
     @OneToOne(fetch = FetchType.EAGER, cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE})
@@ -61,7 +66,18 @@ public class Professor implements Serializable {
     @JoinColumn(name = "department_id")
     private Department department;
 
+
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "professor" ,cascade = {CascadeType.MERGE, CascadeType.PERSIST})
+    private List<Batch> batches = new ArrayList<>();
+
     public Professor(){}
+
+    public Professor(Long id, String firstName, String lastName, String departmentName) {
+        this.id = id;
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.departmentName = departmentName;
+    }
 
     public Long getId() {
         return id;
@@ -168,6 +184,22 @@ public class Professor implements Serializable {
     }
 
 
+    public List<Batch> getBatches() {
+        return batches;
+    }
+
+    public void setBatches(List<Batch> batches) {
+        this.batches = batches;
+    }
+
+    public String getDepartmentName() {
+        return departmentName;
+    }
+
+    public void setDepartmentName(String departmentName) {
+        this.departmentName = departmentName;
+    }
+
     @Override
     public String toString() {
         return "Professor{" +
@@ -180,6 +212,7 @@ public class Professor implements Serializable {
                 ", bloodGroup='" + bloodGroup + '\'' +
                 ", state='" + state + '\'' +
                 ", city='" + city + '\'' +
+                ", departmentName='" + departmentName + '\'' +
                 ", dateOfBirth=" + dateOfBirth +
                 ", user=" + user +
                 ", courses=" + courses +

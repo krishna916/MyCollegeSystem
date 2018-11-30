@@ -66,6 +66,9 @@ public class Student implements Serializable {
     @JoinColumn(name = "department_id")
     private Department department ;
 
+    @ManyToMany(mappedBy = "students")
+    private Set<Batch> batches = new HashSet<>();
+
 
 
     public Student(){}
@@ -182,6 +185,22 @@ public class Student implements Serializable {
         this.department = department;
     }
 
+    public Set<Course> getCourses() {
+        return courses;
+    }
+
+    public void setCourses(Set<Course> courses) {
+        this.courses = courses;
+    }
+
+    public Set<Batch> getBatches() {
+        return batches;
+    }
+
+    public void setBatches(Set<Batch> batches) {
+        this.batches = batches;
+    }
+
     @Override
     public String toString() {
         return "Student{" +
@@ -198,6 +217,7 @@ public class Student implements Serializable {
                 ", registeredDate=" + registeredDate +
                 ", user=" + user +
                 ", department=" + department +
+
                 '}';
     }
 }

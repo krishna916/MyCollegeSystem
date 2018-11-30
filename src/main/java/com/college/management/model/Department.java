@@ -39,6 +39,10 @@ public class Department implements Serializable {
     private List<Professor> professors = new ArrayList<>();
 
 
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "department", cascade = {CascadeType.MERGE, CascadeType.PERSIST})
+    private List<Batch> batches = new ArrayList<>();
+
+    private String batch;
 
     public Department(){}
 
@@ -123,6 +127,22 @@ public class Department implements Serializable {
 
     public void setProfessors(List<Professor> professors) {
         this.professors = professors;
+    }
+
+    public String getBatch() {
+        return batch;
+    }
+
+    public void setBatch(String batch) {
+        this.batch = batch;
+    }
+
+    public List<Batch> getBatches() {
+        return batches;
+    }
+
+    public void setBatches(List<Batch> batches) {
+        this.batches = batches;
     }
 
     @Override

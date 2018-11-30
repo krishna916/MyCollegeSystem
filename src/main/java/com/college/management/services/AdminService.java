@@ -4,6 +4,7 @@ package com.college.management.services;
 import com.college.management.command.*;
 import com.college.management.model.AdminInformation;
 import com.college.management.model.Department;
+import com.college.management.model.Professor;
 import com.college.management.model.User;
 
 import java.util.List;
@@ -52,6 +53,8 @@ public interface AdminService {
 
     void deleteCourse(Long courseId);
 
+    Map<Long, String> findAllCourse();
+
 
 
     // ##########################  PROFESSOR RELATED   ###################  //
@@ -67,6 +70,21 @@ public interface AdminService {
     void updateProfessor(ProfessorCommand professorCommand);
 
     void deleteProfessor(Long userId);
+
+    Map<Long, String> findAllProfessors();
+
+
+    // ###################  Batch Related ########################### //
+
+
+    void saveBatch(BatchCommand batchCommand);
+
+
+    List<BatchCommand> showAllBatches();
+
+    BatchCommand findBatchById(Long batchId);
+
+    List<StudentCommand> findStudentsByDepartment(String departmentName, Long batchId);
 
 
 }

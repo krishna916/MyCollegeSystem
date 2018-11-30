@@ -2,9 +2,7 @@ package com.college.management.model;
 
 import javax.persistence.*;
 import java.io.Serializable;
-import java.util.HashSet;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 
 @Entity
 @Table(name = "course")
@@ -33,10 +31,23 @@ public class Course implements Serializable {
     @JoinColumn(name="department_id")
     private Department department;
 
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "course",cascade = {CascadeType.MERGE, CascadeType.PERSIST})
+    private List<Batch> batches = new ArrayList<>();
+
+
+
+    @Transient
+    private String departmentName;
+
 
     public Course(){}
 
-
+    public Course(Long id, String courseName, String courseCode, String departmentName) {
+        this.id = id;
+        this.courseName = courseName;
+        this.courseCode = courseCode;
+        this.departmentName = departmentName;
+    }
 
     public Long getId() {
         return id;
@@ -98,6 +109,23 @@ public class Course implements Serializable {
 
     public void setDepartment(Department department) {
         this.department = department;
+    }
+
+
+    public List<Batch> getBatches() {
+        return batches;
+    }
+
+    public void setBatches(List<Batch> batches) {
+        this.batches = batches;
+    }
+
+    public String getDepartmentName() {
+        return departmentName;
+    }
+
+    public void setDepartmentName(String departmentName) {
+        this.departmentName = departmentName;
     }
 
     @Override

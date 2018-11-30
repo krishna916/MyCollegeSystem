@@ -8,6 +8,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Optional;
 
 @Repository
@@ -36,5 +37,12 @@ public interface ProfessorRepository extends JpaRepository<Professor, Long> {
 
             @Param("id")long id
     );
+
+    @Query("select p.id, p.firstName, p.lastName from Professor p")
+    List<Professor> selectProfessorIdAndProfessorName();
+
+
+    @Query("select new Professor(p.id, p.firstName, p.lastName, p.department.departmentName) from Professor p")
+    List<Professor> selectProfessorFirstNameAndLastName();
 
 }

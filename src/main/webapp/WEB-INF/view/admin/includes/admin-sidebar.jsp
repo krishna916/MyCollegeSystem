@@ -145,16 +145,16 @@
                     </ul>
                 </li>
                 <li class="nav-item">
-                    <a href="#" class="nav-link nav-toggle"> <i class="material-icons">local_library</i>
-                        <span class="title">Library</span> <span class="arrow"></span>
+                    <a href="#" class="nav-link nav-toggle"> <i class="fas fa-briefcase"></i>
+                        <span class="title">Batches</span> <span class="pull-right"><i class="fas fa-angle-right"></i></span>
                     </a>
                     <ul class="sub-menu">
                         <li class="nav-item">
-                            <a href="all_assets.html" class="nav-link "> <span class="title">All Library Assets</span>
+                            <a href="${pageContext.request.contextPath}/admin/showBatch" class="nav-link "> <span class="title">All Batches</span>
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a href="add_library.html" class="nav-link "> <span class="title">Add Library Asset</span>
+                            <a href="${pageContext.request.contextPath}/admin/addBatch" class="nav-link "> <span class="title">Add Batch</span>
                             </a>
                         </li>
                         <li class="nav-item">

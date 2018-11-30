@@ -42,6 +42,9 @@ public class AdminServiceImpl implements AdminService {
     @Autowired
     private CourseRepository courseRepository;
 
+    @Autowired
+    private BatchRepository batchRepository;
+
 
     @Autowired
     private PasswordEncoder passwordEncoder;
@@ -53,6 +56,9 @@ public class AdminServiceImpl implements AdminService {
     private UserToUserCommand userToUserCommand;
 
     @Autowired
+    private UserPhotoToUserPhotoCommand userPhotoToUserPhotoCommand;
+
+    @Autowired
     private StudentCommandToStudent studentCommandToStudent;
 
     @Autowired
@@ -60,6 +66,9 @@ public class AdminServiceImpl implements AdminService {
 
     @Autowired
     private DepartmentToDepartmentCommand departmentToDepartmentCommand;
+
+    @Autowired
+    private DepartmentCommandToDepartment departmentCommandToDepartment;
 
     @Autowired
     private CourseCommandToCourse courseCommandToCourse;
@@ -72,6 +81,12 @@ public class AdminServiceImpl implements AdminService {
 
     @Autowired
     private ProfessorToProfessorCommand professorToProfessorCommand;
+
+    @Autowired
+    private BatchCommandToBatch batchCommandToBatch;
+
+    @Autowired
+    private BatchToBatchCommand batchToBatchCommand;
 
 
     @Override
@@ -368,11 +383,22 @@ public class AdminServiceImpl implements AdminService {
 
     }
 
+    @Override
+    public Map<Long, String> findAllCourse() {
+
+        List<Course> courses = courseRepository.selectCourseNameAndCourseCode();
 
 
 
+        Map<Long, String> tempCourses = new HashMap<>();
 
+        for(Course course: courses){
 
+            tempCourses.put(course.getId(), course.getCourseName() + ", " + course.getCourseCode() + ", " + course.getDepartmentName());
+        }
+
+        return tempCourses;
+    }
 
 
     // ##########################  PROFESSOR RELATED   ###################  //
@@ -491,5 +517,150 @@ public class AdminServiceImpl implements AdminService {
     public void deleteProfessor(Long userId) {
 
         professorRepository.deleteById(userId);
+    }
+
+    @Override
+    public Map<Long, String> findAllProfessors() {
+
+        //List<Professor> tempProfessors = professorRepository.selectProfessorIdAndProfessorName();
+
+        List<Professor> tempProfessors = professorRepository.selectProfessorFirstNameAndLastName();
+
+        System.out.println(tempProfessors);
+
+        Map<Long, String> professors = new HashMap<>();
+
+        for(Professor professor: tempProfessors){
+
+            professors.put(professor.getId(), professor.getFirstName() + " " + professor.getLastName() + ", " + professor.getDepartmentName());
+
+        }
+
+        return professors;
+    }
+
+
+
+
+    //######################  Batch Related  ###################### //
+
+    @Override
+    public void saveBatch(BatchCommand batchCommand) {
+
+        Batch batch = batchCommandToBatch.convert(batchCommand);
+
+        batch.setDepartment(departmentCommandToDepartment.convert(batchCommand.getDepartmentCommand()));
+
+        batch.setProfessor(professorCommandToProfessor.convert(batchCommand.getProfessorCommand()));
+
+        batch.setCourse(courseCommandToCourse.convert(batchCommand.getCourseCommand()));
+
+        System.out.println(batch);
+
+        batchRepository.save(batch);
+
+    }
+
+    @Override
+    public List<BatchCommand> showAllBatches() {
+
+        List<Batch> batches = batchRepository.findAllByOrderByDepartmentAsc();
+
+        List<BatchCommand> batchCommands = new ArrayList<>();
+
+        for(Batch batch: batches){
+
+
+            batch.setNumberOfStudents(batch.getStudents().size());
+            BatchCommand batchCommand = batchToBatchCommand.convert(batch);
+
+            batchCommand.setDepartmentCommand(departmentToDepartmentCommand.convert(batch.getDepartment()));
+            batchCommand.setProfessorCommand(professorToProfessorCommand.convert(batch.getProfessor()));
+            batchCommand.setCourseCommand(courseToCourseCommand.convert(batch.getCourse()));
+
+            batchCommands.add(batchCommand);
+        }
+
+
+        return batchCommands;
+    }
+
+    @Override
+    public BatchCommand findBatchById(Long batchId) {
+
+        Optional<Batch> Optionalbatch = batchRepository.findById(batchId);
+
+
+
+        if(Optionalbatch.isPresent()){
+
+            Batch batch = Optionalbatch.get();
+
+            BatchCommand batchCommand = batchToBatchCommand.convert(batch);
+
+            batchCommand.setProfessorCommand(professorToProfessorCommand.convert(batch.getProfessor()));
+
+            batchCommand.setDepartmentCommand(departmentToDepartmentCommand.convert(batch.getDepartment()));
+
+            batchCommand.setCourseCommand(courseToCourseCommand.convert(batch.getCourse()));
+
+            return batchCommand;
+
+        }
+
+
+        return null;
+    }
+
+    @Override
+    public List<StudentCommand> findStudentsByDepartment(String departmentName, Long batchId) {
+
+        List<Student> students = studentRepository.showByDepartment(departmentName);
+
+        List<StudentCommand> studentCommands = new ArrayList<>();
+
+        Iterator itr = students.iterator();
+
+        while(itr.hasNext()){
+
+            Student student = (Student)itr.next();
+            Set<Batch> batches = student.getBatches();
+
+            boolean ifExistsInBatch = false;
+
+            for(Batch batch: batches){
+
+                if(batchId == batch.getId()){
+                    ifExistsInBatch = true;
+                }
+
+            }
+
+            if(ifExistsInBatch){
+                itr.remove();
+            }
+
+        }
+
+
+
+        for(Student student: students){
+
+
+
+            StudentCommand studentCommand = studentToStudentCommand.convert(student);
+
+            studentCommand.setDepartmentCommand(departmentToDepartmentCommand.convert(student.getDepartment()));
+
+            studentCommand.setUserCommand(userToUserCommand.convert(student.getUser()));
+
+            studentCommand.getUserCommand().setUserPhotoCommand(
+                    userPhotoToUserPhotoCommand.convert(student.getUser().getUserPhoto())
+                );
+
+            studentCommands.add(studentCommand);
+        }
+
+        return studentCommands;
     }
 }
